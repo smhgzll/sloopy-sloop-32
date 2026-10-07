@@ -1,0 +1,16 @@
+# sloopy-sloop-32 partition table, 16 MB flash (N16R16).
+# Name,      Type, SubType,  Offset,   Size,     Flags
+nvs,         data, nvs,      0x9000,   0x6000,
+otadata,     data, ota,      0xF000,   0x2000,
+phy_init,    data, phy,      0x11000,  0x1000,
+ota_0,       app,  ota_0,    0x20000,  0x400000,
+ota_1,       app,  ota_1,    0x420000, 0x400000,
+# SLOOP's own store: its FM-1 flash map 0x90000..0xFFFFF (settings, 4 projects + autosave,
+# 32 user presets, 3 user sample slots), A/B sectors as upstream storage.c writes them.
+sloop,       data, 0x40,     0x820000, 0x70000,
+# reserved for later (a sample library, user files); not used by v1
+userfs,      data, spiffs,   0x890000, 0x6B0000,
+# a store backup being restored (device page): written here, copied into "sloop" at the next boot
+# before SLOOP starts, so it never races SLOOP's own flash writes
+stage,       data, 0x41,     0xF40000, 0x80000,
+coredump,    data, coredump, 0xFC0000, 0x40000,

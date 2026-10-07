@@ -1,0 +1,18 @@
+# QEMU profile: null audio output, no Wi-Fi, the boot self-test (main/selftest.c).
+CONFIG_SLOOPY_QEMU_BUILD=y
+# the web panel over QEMU's emulated OpenCores Ethernet (scripts/run-qemu.sh forwards the port)
+CONFIG_SLOOPY_ENABLE_WEB=y
+CONFIG_ETH_USE_OPENETH=y
+CONFIG_SLOOPY_I2S_BCLK_GPIO=-1
+CONFIG_SLOOPY_I2S_WS_GPIO=-1
+CONFIG_SLOOPY_I2S_DOUT_GPIO=-1
+# PSRAM in QUAD mode under QEMU: Espressif QEMU 9.2.2 (esp_develop_9.2.2_20260417) crashes on
+# any PSRAM data access in octal mode (KNOWN_ISSUES KI-5). Same 16 MB, same heap / .ext_ram.bss
+# / MMU / cache logic; only the MSPI line-mode init differs from the octal N16R16 hardware.
+CONFIG_SPIRAM_MODE_QUAD=y
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_160=y
+# QEMU's OpenCores NIC drops frames with the default 4 RX buffers under the panel's traffic, and
+# has no multicast filter for mDNS (mDNS is for hardware: http://<hostname>.local/)
+CONFIG_ETH_OPENETH_DMA_RX_BUFFER_NUM=16
+CONFIG_ETH_OPENETH_DMA_TX_BUFFER_NUM=4
+CONFIG_SLOOPY_MDNS=n

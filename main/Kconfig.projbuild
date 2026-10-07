@@ -1,0 +1,113 @@
+menu "Sloopy Sloop 32"
+
+config SLOOPY_QEMU_BUILD
+    bool "QEMU build"
+    default n
+    help
+        QEMU-safe profile: null audio output, no Wi-Fi, and a self-test that drives SLOOP and
+        prints SLOOP_QEMU_PASS / SLOOP_QEMU_FAIL on the console (scripts/test-qemu.sh).
+
+config SLOOPY_SELFTEST
+    bool "Run the boot self-test"
+    default y if SLOOPY_QEMU_BUILD
+    default n
+
+config SLOOPY_ENABLE_WEB
+    bool "Network and web panel"
+    default y
+    help
+        Serves the FM-1 panel over HTTP + WebSocket. The network is Wi-Fi (SLOOPY_WIFI_*) on
+        hardware, or the emulated OpenCores Ethernet when ETH_USE_OPENETH is set (QEMU).
+
+config SLOOPY_WIFI_MODE
+    string "Wi-Fi mode (AP or STA)"
+    default "AP"
+
+config SLOOPY_WIFI_SSID
+    string "Wi-Fi SSID"
+    default "Sloopy-Sloop-32"
+
+config SLOOPY_WIFI_PASSWORD
+    string "Wi-Fi password"
+    default "change-this-password"
+
+config SLOOPY_HOSTNAME
+    string "Hostname (mDNS / DHCP)"
+    default "sloopy"
+
+config SLOOPY_MDNS
+    bool "Announce the panel over mDNS (http://<hostname>.local/)"
+    default y
+    depends on SLOOPY_ENABLE_WEB
+
+config SLOOPY_USB_MIDI
+    bool "USB-MIDI device on the native USB port"
+    default n
+    depends on SOC_USB_OTG_SUPPORTED
+    help
+        SLOOP as a class-compliant USB-MIDI device, as the FM-1 is (MIDI in / out, and SLOOP's web
+        editor over Web MIDI). TinyUSB takes the native USB port (GPIO19/20): its USB-Serial/JTAG
+        console and flashing stop while the firmware runs. Flash and watch the console through the
+        board's UART port, or hold BOOT while plugging in to flash over native USB.
+
+config SLOOPY_USB_VID
+    hex "USB vendor ID"
+    default 0x1209
+    depends on SLOOPY_USB_MIDI
+    help
+        0x1209 / 0x0001 is the pid.codes test ID upstream SLOOP's FM-1 firmware uses.
+
+config SLOOPY_USB_PID
+    hex "USB product ID"
+    default 0x0001
+    depends on SLOOPY_USB_MIDI
+
+config SLOOPY_USB_PRODUCT
+    string "USB product name"
+    default "Felucca (sloopy-sloop-32)"
+    depends on SLOOPY_USB_MIDI
+    help
+        SLOOP's web editor looks for a MIDI port whose name contains "Felucca". ASCII only.
+
+config SLOOPY_I2S_BCLK_GPIO
+    int "PCM5102A I2S BCLK GPIO"
+    range -1 48
+    default -1
+
+config SLOOPY_I2S_WS_GPIO
+    int "PCM5102A I2S LRCLK/WS GPIO"
+    range -1 48
+    default -1
+
+config SLOOPY_I2S_DOUT_GPIO
+    int "PCM5102A I2S DATA OUT GPIO"
+    range -1 48
+    default -1
+
+config SLOOPY_AUDIO_SAMPLE_RATE
+    int "Audio sample rate"
+    default 44100
+    help
+        SLOOP's DSP is written for 44.1 kHz (tables, tempo clock); keep this value.
+
+config SLOOPY_I2S_DMA_DESC
+    int "I2S DMA buffers"
+    range 2 16
+    default 4
+
+config SLOOPY_I2S_DMA_FRAMES
+    int "Frames per I2S DMA buffer"
+    range 64 1024
+    default 256
+
+config SLOOPY_SLOOP_CORE
+    int "CPU core of the SLOOP audio + UI tasks"
+    range 0 1
+    default 1
+
+config SLOOPY_WEB_PORT
+    int "HTTP port"
+    range 1 65535
+    default 80
+
+endmenu

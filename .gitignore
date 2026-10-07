@@ -1,0 +1,39 @@
+# build outputs (scripts/build-*.sh, idf.py)
+/build/
+/build-*/
+/sdkconfig
+/sdkconfig.old
+/managed_components/
+*.bin
+*.elf
+*.map
+*.log
+*.wav
+*.ppm
+
+# local settings and secrets: Wi-Fi password, pins (config/local.env.example is the template)
+/config/local.env
+/config/sdkconfig.local.defaults
+.env
+*.env
+
+# fetched / installed by the scripts, never vendored
+/upstream/sloop-fm1/
+/tools/esp-idf/
+/tools/qemu/
+
+# Python, node
+__pycache__/
+.pytest_cache/
+node_modules/
+
+# editors, OS, local agent settings
+/.vscode/
+/.idea/
+/.claude/
+*.swp
+*~
+.DS_Store
+
+# personal photos (publish only edited copies, e.g. docs/images/real-demo.jpg)
+/assets/references/RealDemo.jpeg

@@ -1,0 +1,6 @@
+# Known-good baseline: the upstream SLOOP and ESP-IDF revisions this port is built and tested with.
+# scripts/fetch-sloop.sh checks out SLOOP_COMMIT unless SLOOP_REF is set.
+SLOOP_REPO=https://github.com/isod89/sloop-fm1.git
+SLOOP_COMMIT=f2b44c219b8a4ac00bc06dca756cdae8a259dd1a
+ESP_IDF_REF=v5.5.5
+ESP_IDF_COMMIT=b774170ff46c393eeb5e495ea37936038d3f4f4f

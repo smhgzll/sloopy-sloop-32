@@ -1,0 +1,9 @@
+Visual reference URL:
+https://images.rackears.io/products/M-Wave_fm-1_01-576x576.jpg
+
+Product page:
+https://www.rackears.io/products/m-vave-fm-1
+
+The local SVG/PNG in this directory is a project-made layout reference based on publicly visible panel geometry, not the original product photo and not official artwork.
+
+For the final pixel-accurate browser panel, add your own straight-on, high-resolution FM-1 photo to this directory and update docs/UI_SPEC.md if needed.

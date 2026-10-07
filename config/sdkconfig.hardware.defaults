@@ -1,0 +1,9 @@
+# Real hardware profile. Local pins / credentials are added by config/sdkconfig.local.defaults
+# (generated from config/local.env, never committed).
+CONFIG_SLOOPY_QEMU_BUILD=n
+CONFIG_SLOOPY_ENABLE_WEB=y
+# Wi-Fi / lwIP buffers in PSRAM: internal RAM stays for audio and DMA
+CONFIG_SPIRAM_TRY_ALLOCATE_WIFI_LWIP=y
+CONFIG_ESP_WIFI_TASK_PINNED_TO_CORE_0=y
+# Full speed for the DSP (the QEMU profile stays at the 160 MHz default: no benefit there).
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_240=y

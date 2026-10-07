@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#16171a">
+  <title>SLOOP FM-1</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main id="stage">
+    <div id="panel"></div>
+    <p id="rotate-hint">Turn the phone sideways for a bigger panel.</p>
+    <footer id="bar">
+      <span id="conn" class="conn">connecting…</span>
+      <span id="info"></span>
+      <span class="spacer"></span>
+      <button id="midi-btn" type="button" aria-pressed="false" title="Play SLOOP from a MIDI keyboard connected to this computer or phone (Web MIDI)">midi in</button>
+      <a class="bar-link" href="device.html" target="_blank" rel="noopener" title="status, network settings">device</a>
+      <a id="editor-link" class="bar-link" href="editor.html" target="_blank" rel="noopener" title="SLOOP's web editor: every parameter, the drum grid, presets, your samples">editor</a>
+      <button id="help-btn" type="button" aria-expanded="false" aria-controls="help">keys ?</button>
+    </footer>
+    <section id="help" hidden>
+      <p><b>Hold</b> a button and touch keys or turn knobs, as on the FM-1: SLOOP's layers work with
+      several fingers on a touch screen. With a mouse, <b>right-click</b> a button or key to latch it
+      down (right-click again or <kbd>Esc</kbd> to let go).</p>
+      <p>Keys: <kbd>Z</kbd>…<kbd>/</kbd> white F3–A4, <kbd>S D F H J L ; '</kbd> their black keys,
+      <kbd>Q W E R T Y</kbd> B4–G5 with <kbd>3 4 6</kbd>. <kbd>Space</kbd> PLAY/STOP,
+      <kbd>[</kbd> <kbd>]</kbd> OCT− / OCT+.</p>
+      <p>Encoders: drag up / down, the wheel, or arrow keys when focused. MASTER: drag or wheel.</p>
+    </section>
+  </main>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

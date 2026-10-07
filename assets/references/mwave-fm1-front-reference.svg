@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700">
+<defs>
+  <linearGradient id="body" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#333"/><stop offset="1" stop-color="#1e1e1e"/></linearGradient>
+  <style>
+    .label{font:14px Arial,sans-serif;fill:#e8e8e8;text-anchor:middle}.small{font:11px Arial,sans-serif;fill:#ddd;text-anchor:middle}
+    .btn{fill:#1b1b1b;stroke:#555;stroke-width:2}.knob{fill:#111;stroke:#777;stroke-width:3}.key{fill:#111;stroke:#555;stroke-width:2}
+  </style>
+</defs>
+<rect width="1200" height="700" fill="#f3f3f3"/>
+<rect x="85" y="105" width="1030" height="490" rx="55" fill="url(#body)" stroke="#111" stroke-width="4"/>
+
+<!-- left controls -->
+<text class="label" x="175" y="145">MASTER</text><circle class="knob" cx="175" cy="180" r="20"/><line x1="175" y1="180" x2="175" y2="164" stroke="#ccc" stroke-width="3"/>
+<text class="label" x="285" y="145">SELECT</text><circle class="knob" cx="285" cy="180" r="20"/><line x1="285" y1="180" x2="285" y2="164" stroke="#ccc" stroke-width="3"/>
+<text class="label" x="175" y="235">PRESETS</text><circle class="knob" cx="175" cy="270" r="20"/>
+<text class="label" x="285" y="235">ALGORITHM</text><circle class="knob" cx="285" cy="270" r="20"/>
+<rect class="btn" x="150" y="325" width="70" height="42" rx="8"/><text class="small" x="185" y="351">OCT-</text>
+<rect class="btn" x="240" y="325" width="70" height="42" rx="8"/><text class="small" x="275" y="351">OCT+</text>
+
+<!-- display -->
+<rect x="355" y="145" width="210" height="205" rx="22" fill="#111" stroke="#555" stroke-width="3"/>
+<rect x="383" y="170" width="154" height="154" fill="#b9d6d1" stroke="#ddd" stroke-width="2"/>
+<text x="393" y="192" font-family="monospace" font-size="14" fill="#253238">001 PIANO 1</text>
+<rect x="393" y="207" width="42" height="28" fill="#dce8e5" stroke="#607d7a"/><text x="414" y="226" text-anchor="middle" font-size="11">Filter</text>
+<rect x="439" y="207" width="42" height="28" fill="#dce8e5" stroke="#607d7a"/><text x="460" y="226" text-anchor="middle" font-size="11">Reverb</text>
+<rect x="485" y="207" width="42" height="28" fill="#dce8e5" stroke="#607d7a"/><text x="506" y="226" text-anchor="middle" font-size="11">Delay</text>
+<rect x="393" y="242" width="42" height="28" fill="#dce8e5" stroke="#607d7a"/><text x="414" y="261" text-anchor="middle" font-size="10">Distort</text>
+<rect x="439" y="242" width="42" height="28" fill="#dce8e5" stroke="#607d7a"/><text x="460" y="261" text-anchor="middle" font-size="10">Chorus</text>
+<rect x="485" y="242" width="42" height="28" fill="#dce8e5" stroke="#607d7a"/><text x="506" y="261" text-anchor="middle" font-size="10">Phaser</text>
+<rect x="393" y="282" width="134" height="26" fill="#dce8e5" stroke="#607d7a"/><text x="460" y="300" text-anchor="middle" font-size="10">Type: Low Pass</text>
+
+<!-- top right knobs -->
+<g><text class="label" x="650" y="145">KNOB1</text><circle class="knob" cx="650" cy="180" r="20"/><line x1="650" y1="180" x2="650" y2="164" stroke="#ccc" stroke-width="3"/></g>
+<g><text class="label" x="760" y="145">KNOB2</text><circle class="knob" cx="760" cy="180" r="20"/><line x1="760" y1="180" x2="760" y2="164" stroke="#ccc" stroke-width="3"/></g>
+<g><text class="label" x="870" y="145">KNOB3</text><circle class="knob" cx="870" cy="180" r="20"/><line x1="870" y1="180" x2="870" y2="164" stroke="#ccc" stroke-width="3"/></g>
+<g><text class="label" x="980" y="145">KNOB4</text><circle class="knob" cx="980" cy="180" r="20"/><line x1="980" y1="180" x2="980" y2="164" stroke="#ccc" stroke-width="3"/></g>
+
+<!-- function buttons -->
+<g id="buttons">
+<rect class="btn" x="620" y="250" width="58" height="46" rx="8"/><text class="small" x="649" y="278">FX</text>
+<rect class="btn" x="692" y="250" width="58" height="46" rx="8"/><text class="small" x="721" y="278">SCL</text>
+<rect class="btn" x="764" y="250" width="58" height="46" rx="8"/><text class="small" x="793" y="278">ENV</text>
+<rect class="btn" x="836" y="250" width="58" height="46" rx="8"/><text class="small" x="865" y="278">LFO</text>
+<rect class="btn" x="908" y="250" width="58" height="46" rx="8"/><text class="small" x="937" y="278">EDIT</text>
+<rect class="btn" x="980" y="250" width="58" height="46" rx="8"/><text class="small" x="1009" y="278">GLO</text>
+<rect class="btn" x="620" y="307" width="58" height="46" rx="8"/><text class="small" x="649" y="335">HOME</text>
+<rect class="btn" x="692" y="307" width="58" height="46" rx="8"/><text class="small" x="721" y="335">SAVE</text>
+<rect class="btn" x="764" y="307" width="58" height="46" rx="8"/><text class="small" x="793" y="335">ARP</text>
+<rect class="btn" x="836" y="307" width="58" height="46" rx="8"/><text class="small" x="865" y="335">SEQ</text>
+<rect class="btn" x="908" y="307" width="58" height="46" rx="8"/><text class="small" x="937" y="329">PLAY</text><text class="small" x="937" y="342">STOP</text>
+<rect class="btn" x="980" y="307" width="58" height="46" rx="8"/><text class="small" x="1009" y="335">REC</text>
+</g>
+
+<!-- lower panel -->
+<rect x="120" y="395" width="960" height="160" rx="28" fill="#181818" stroke="#555" stroke-width="3"/>
+<!-- upper mini keys -->
+<g>
+<rect class="key" x="155" y="415" width="48" height="65" rx="17"/><text class="small" x="179" y="440">I</text><text class="small" x="179" y="462">OP1</text>
+<rect class="key" x="215" y="415" width="48" height="65" rx="17"/><text class="small" x="239" y="462">OP2</text>
+<rect class="key" x="275" y="415" width="48" height="65" rx="17"/><text class="small" x="299" y="462">OP3</text>
+<rect class="key" x="395" y="415" width="48" height="65" rx="17"/><text class="small" x="419" y="462">OP4</text>
+<rect class="key" x="455" y="415" width="48" height="65" rx="17"/><text class="small" x="479" y="462">OP5</text>
+<rect class="key" x="575" y="415" width="48" height="65" rx="17"/><text class="small" x="599" y="462">OP6</text>
+<rect class="key" x="635" y="415" width="48" height="65" rx="17"/><text class="small" x="659" y="462">PIT</text>
+<rect class="key" x="695" y="415" width="48" height="65" rx="17"/><text class="small" x="719" y="462">GLO</text>
+<rect class="key" x="815" y="415" width="48" height="65" rx="17"/><text class="small" x="839" y="462">MONO</text>
+<rect class="key" x="875" y="415" width="48" height="65" rx="17"/><text class="small" x="899" y="462">POLY</text>
+<rect class="key" x="995" y="415" width="48" height="65" rx="17"/><text class="small" x="1019" y="444">I</text>
+</g>
+<!-- 16 lower performance keys -->
+<g>
+<rect class="key" x="145" y="487" width="42" height="55" rx="16"/><rect x="163" y="502" width="6" height="25" rx="3" fill="#aaa"/><rect class="key" x="202" y="487" width="42" height="55" rx="16"/><rect x="220" y="502" width="6" height="25" rx="3" fill="#aaa"/><rect class="key" x="259" y="487" width="42" height="55" rx="16"/><rect x="277" y="502" width="6" height="25" rx="3" fill="#aaa"/><rect class="key" x="316" y="487" width="42" height="55" rx="16"/><rect x="334" y="502" width="6" height="25" rx="3" fill="#aaa"/><rect class="key" x="373" y="487" width="42" height="55" rx="16"/><rect x="391" y="502" width="6" height="25" rx="3" fill="#aaa"/><rect class="key" x="430" y="487" width="42" height="55" rx="16"/><rect x="448" y="502" width="6" height="25" rx="3" fill="#aaa"/><rect class="key" x="487" y="487" width="42" height="55" rx="16"/><rect x="505" y="502" width="6" height="25" rx="3" fill="#aaa"/><rect class="key" x="544" y="487" width="42" height="55" rx="16"/><rect x="562" y="502" width="6" height="25" rx="3" fill="#aaa"/><rect class="key" x="601" y="487" width="42" height="55" rx="16"/><rect x="619" y="502" width="6" height="25" rx="3" fill="#aaa"/><rect class="key" x="658" y="487" width="42" height="55" rx="16"/><rect x="676" y="502" width="6" height="25" rx="3" fill="#aaa"/><rect class="key" x="715" y="487" width="42" height="55" rx="16"/><rect x="733" y="502" width="6" height="25" rx="3" fill="#aaa"/><rect class="key" x="772" y="487" width="42" height="55" rx="16"/><rect x="790" y="502" width="6" height="25" rx="3" fill="#aaa"/><rect class="key" x="829" y="487" width="42" height="55" rx="16"/><rect x="847" y="502" width="6" height="25" rx="3" fill="#aaa"/><rect class="key" x="886" y="487" width="42" height="55" rx="16"/><rect x="904" y="502" width="6" height="25" rx="3" fill="#aaa"/><rect class="key" x="943" y="487" width="42" height="55" rx="16"/><rect x="961" y="502" width="6" height="25" rx="3" fill="#aaa"/><rect class="key" x="1000" y="487" width="42" height="55" rx="16"/><rect x="1018" y="502" width="6" height="25" rx="3" fill="#aaa"/>
+</g>
+<text x="600" y="635" text-anchor="middle" font-family="Arial,sans-serif" font-size="18" fill="#555">Project-made FM-1 layout reference — not official artwork</text>
+</svg>

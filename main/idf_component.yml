@@ -1,0 +1,8 @@
+## Managed components (downloaded by idf.py from components.espressif.com; versions are pinned in
+## dependencies.lock, which is committed)
+dependencies:
+  idf: ">=5.5"
+  # http://<hostname>.local/: the panel without knowing the device's IP
+  espressif/mdns: "~1.14.0"
+  # the USB-MIDI device on the native USB port (SLOOPY_USB_MIDI; components/usb_midi)
+  espressif/esp_tinyusb: "~2.4.0"

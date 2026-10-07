@@ -1,0 +1,20 @@
+# SLOOP keeps its big zero-initialised buffers in a section of their own, ".pool" (the FM-1's
+# POOL RAM region): FX delay / chorus / reverb lines, the slicer and punch-in rings, the draw
+# canvas, the granular state, project buffers, and the port's two 240x240 framebuffers.
+# On the ESP32-S3 they go to external PSRAM (.ext_ram.bss, zeroed at startup); everything else
+# of the core (voices, tracks, mixer state, the audio half buffers) stays in internal RAM.
+[sections:sloop_pool]
+entries:
+    .pool+
+
+[scheme:sloop_pool_psram]
+entries:
+    if ESP_ALLOW_BSS_SEG_EXTERNAL_MEMORY = y:
+        sloop_pool -> extern_ram
+    else:
+        sloop_pool -> dram0_bss
+
+[mapping:sloop_core]
+archive: libsloop_core.a
+entries:
+    * (sloop_pool_psram)

@@ -1,0 +1,39 @@
+# sloopy-sloop-32: common ESP32-S3 N16R16 defaults (QEMU and hardware).
+# Board-specific flash mode / frequency should be verified on the real clone board
+# (many N16R16 boards run QIO 80 MHz; DIO is the safe default).
+CONFIG_IDF_TARGET="esp32s3"
+CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="config/partitions.csv"
+CONFIG_PARTITION_TABLE_OFFSET=0x8000
+
+# 16 MB octal PSRAM; SLOOP's big buffers (.pool) go there, hot DSP state stays internal
+CONFIG_SPIRAM=y
+CONFIG_SPIRAM_MODE_OCT=y
+CONFIG_SPIRAM_SPEED_80M=y
+CONFIG_SPIRAM_USE_MALLOC=y
+CONFIG_SPIRAM_ALLOW_BSS_SEG_EXTERNAL_MEMORY=y
+CONFIG_SPIRAM_MALLOC_ALWAYSINTERNAL=16384
+CONFIG_SPIRAM_MALLOC_RESERVE_INTERNAL=32768
+
+CONFIG_FREERTOS_HZ=1000
+CONFIG_ESP_MAIN_TASK_STACK_SIZE=8192
+CONFIG_COMPILER_OPTIMIZATION_PERF=y
+
+# web panel: WebSocket, browsers' long headers; lwIP and httpd on core 0 (core 1 is SLOOP's)
+CONFIG_HTTPD_WS_SUPPORT=y
+CONFIG_HTTPD_MAX_REQ_HDR_LEN=1024
+CONFIG_LWIP_TCPIP_TASK_AFFINITY_CPU0=y
+
+# caches: SLOOP's render runs from flash and streams its FX lines from PSRAM through them; the
+# larger configuration trades ~48 KB of internal SRAM for fewer stalls (measure: hardware test H-7)
+CONFIG_ESP32S3_INSTRUCTION_CACHE_32KB=y
+CONFIG_ESP32S3_DATA_CACHE_64KB=y
+CONFIG_ESP32S3_DATA_CACHE_LINE_64B=y
+
+# firmware updates from the device page (POST /api/ota): a new image that does not confirm itself
+# (SLOOP and the web server running) is rolled back by the bootloader at the next reset
+CONFIG_BOOTLOADER_APP_ROLLBACK_ENABLE=y
+
+# the USB-MIDI device (CONFIG_SLOOPY_USB_MIDI, opt-in from config/local.env): TinyUSB's MIDI class
+CONFIG_TINYUSB_MIDI_COUNT=1

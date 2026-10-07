@@ -1,0 +1,232 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: GPL-3.0-only -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SLOOP device</title>
+  <style>
+    :root { color-scheme: dark; --bg: #121317; --card: #1b1d22; --line: #2e3138; --ink: #d4d6da; --dim: #8a8f98;
+            --ok: #7ad48a; --bad: #e56b6b; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    body { margin: 0; background: var(--bg); color: var(--ink); }
+    main { max-width: 760px; margin: 0 auto; padding: 16px; }
+    h1 { font-size: 1.25rem; margin: .6rem 0 1rem; } h2 { font-size: 1rem; margin: 0 0 .7rem; }
+    a { color: var(--ink); }
+    section { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; margin-bottom: 14px; }
+    dl { display: grid; grid-template-columns: max-content 1fr; gap: .3rem 1rem; margin: 0; font-size: .92rem; }
+    dt { color: var(--dim); } dd { margin: 0; font-variant-numeric: tabular-nums; }
+    label { display: grid; gap: .25rem; margin-bottom: .7rem; font-size: .9rem; color: var(--dim); }
+    input, select { font: inherit; padding: .45rem .55rem; background: #111216; color: var(--ink); border: 1px solid var(--line); border-radius: 6px; }
+    .row { display: flex; gap: .6rem; flex-wrap: wrap; align-items: center; }
+    button { font: inherit; padding: .45rem .9rem; border-radius: 6px; border: 1px solid var(--line); background: #262931; color: var(--ink); cursor: pointer; }
+    button.primary { background: #2f4f37; border-color: #3f6a4a; }
+    #msg { font-size: .9rem; } .ok { color: var(--ok); } .bad { color: var(--bad); }
+    small { color: var(--dim); }
+    progress { width: 100%; height: .6rem; accent-color: #5aa86a; }
+    #fw[hidden], #bk[hidden] { display: none; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>SLOOP device · <a href="/">panel</a> · <a href="/editor.html">editor</a></h1>
+
+  <section aria-labelledby="st-h">
+    <h2 id="st-h">Status</h2>
+    <dl id="status"><dt>loading…</dt><dd></dd></dl>
+  </section>
+
+  <section aria-labelledby="net-h">
+    <h2 id="net-h">Network</h2>
+    <p><small id="net-src"></small></p>
+    <form id="net" autocomplete="off">
+      <label>Mode <select name="mode"><option value="STA">join a Wi-Fi network (STA)</option><option value="AP">its own access point (AP)</option></select></label>
+      <label>Network name (SSID) <input name="ssid" maxlength="32" required></label>
+      <label>Password (8–63 characters, empty for an open network) <input name="password" type="password" maxlength="63"></label>
+      <label><span>Hostname (<span id="host-preview">sloopy</span>.local)</span> <input name="hostname" maxlength="31" pattern="[a-z0-9-]+" required></label>
+      <label>Current Wi-Fi password (to allow the change) <input name="current_password" type="password" maxlength="63"></label>
+      <div class="row">
+        <button class="primary" type="submit">Save and restart</button>
+        <button type="button" id="reset">Back to the build's settings</button>
+        <span id="msg" role="status"></span>
+      </div>
+    </form>
+  </section>
+
+  <section id="bk" aria-labelledby="bk-h" hidden>
+    <h2 id="bk-h">Projects backup</h2>
+    <p><small>Everything SLOOP saves (settings, the 4 projects and the working one, user presets, user
+      sample slots) as one file.</small></p>
+    <p><a id="bk-get" href="/api/store" download>Download a backup</a></p>
+    <form id="bkf" autocomplete="off">
+      <label><span>Restore a backup (<code>sloop-store-*.bin</code>): it replaces everything SLOOP has saved</span>
+        <input name="image" type="file" accept=".bin,application/octet-stream" required></label>
+      <label>Current Wi-Fi password (to allow it) <input name="current_password" type="password" maxlength="63"></label>
+      <div class="row">
+        <button class="primary" type="submit">Restore and restart</button>
+        <span id="bk-msg" role="status"></span>
+      </div>
+    </form>
+  </section>
+
+  <section id="fw" aria-labelledby="fw-h" hidden>
+    <h2 id="fw-h">Firmware</h2>
+    <p><small id="fw-now"></small></p>
+    <form id="fwf" autocomplete="off">
+      <label><span>New firmware (<code>build-hw/sloopy_sloop_32.bin</code> from <code>scripts/build-hardware.sh</code>)</span>
+        <input name="image" type="file" accept=".bin,application/octet-stream" required></label>
+      <label>Current Wi-Fi password (to allow the update) <input name="current_password" type="password" maxlength="63"></label>
+      <div class="row">
+        <button class="primary" type="submit">Update and restart</button>
+        <span id="fw-msg" role="status"></span>
+      </div>
+      <p><progress id="fw-prog" max="1" value="0" hidden></progress></p>
+      <p><small>Audio pauses while the new firmware is written. If it does not start properly, the
+        device goes back to the firmware it runs now. Projects, presets and network settings stay.</small></p>
+    </form>
+  </section>
+</main>
+<script>
+'use strict';
+const $ = (id) => document.getElementById(id);
+const fmt = (n) => (n ?? 0).toLocaleString();
+async function status() {
+  try {
+    const s = await (await fetch('/api/status', { cache: 'no-store' })).json();
+    const rows = [
+      ['SLOOP', `${s.sloop} (upstream ${s.upstream})`],
+      ['uptime', `${Math.round(s.uptime_ms / 1000)} s`],
+      ['transport', `${s.playing ? 'playing' : 'stopped'} · ${s.bpm} BPM`],
+      ['audio out', `${s.audio.output} · ${fmt(s.audio.frames)} frames · underruns ${s.audio.underruns}`],
+      ['audio load', `${s.audio.cpu_pct} % · render max ${fmt(s.audio.render_max_us)} µs of 5805`],
+      ['heap', `internal ${fmt(s.heap.internal_free)} B (min ${fmt(s.heap.internal_min)}) · PSRAM ${fmt(s.heap.psram_free)} B`],
+      ['stacks free', `audio ${s.stack_free.audio} B · UI ${s.stack_free.ui} B`],
+      ['store', `${s.store.writes} writes · ${s.store.errors} errors`],
+      ['firmware', s.app ? `${s.app.version} · built ${s.app.built} · ${s.app.partition} (${s.app.ota_state})` : '–'],
+      ['panels', `${s.web.panels} connected`],
+      ['USB-MIDI', !s.usb_midi || !s.usb_midi.enabled ? 'off (SLOOPY_USB_MIDI)'
+        : `${s.usb_midi.linked ? 'host connected' : 'no host'} · in ${fmt(s.usb_midi.rx)} · out ${fmt(s.usb_midi.tx)}` +
+          ` · dropped ${s.usb_midi.rx_dropped} / ${s.usb_midi.tx_dropped}`],
+    ];
+    $('status').replaceChildren(...rows.flatMap(([k, v]) => { const dt = document.createElement('dt'), dd = document.createElement('dd'); dt.textContent = k; dd.textContent = v; return [dt, dd]; }));
+    last = s;
+    $('fw').hidden = !(s.app && s.app.ota);
+    $('bk').hidden = !s.store.backup;
+    if (s.app) $('fw-now').textContent = `Running ${s.app.version} from ${s.app.partition}; an update goes into the other slot.`;
+  } catch { /* (the device restarts: try again) */ }
+}
+async function loadNet() {
+  const s = await (await fetch('/api/settings', { cache: 'no-store' })).json();
+  const f = $('net');
+  f.mode.value = s.mode; f.ssid.value = s.ssid; f.hostname.value = s.hostname;
+  $('host-preview').textContent = s.hostname;
+  $('net-src').textContent = `In use: ${s.mode} "${s.ssid}" (${s.source === 'device' ? 'changed on this device' : "from the build's config/local.env"}), network: ${s.network}. Changes apply after a restart.`;
+}
+let last = null;
+function say(text, ok, id = 'msg') { $(id).textContent = text; $(id).className = ok ? 'ok' : 'bad'; }
+async function post(url, body) {
+  const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  const j = await r.json().catch(() => ({}));
+  return { ok: r.ok, j };
+}
+$('net').hostname.addEventListener('input', (e) => { $('host-preview').textContent = e.target.value || 'sloopy'; });
+$('net').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const f = e.target;
+  const { ok, j } = await post('/api/settings', { mode: f.mode.value, ssid: f.ssid.value, password: f.password.value,
+    hostname: f.hostname.value, current_password: f.current_password.value, restart: true });
+  say(ok ? (j.restart ? 'Saved: the device restarts and joins the new network.' : 'Saved: applies at the next boot.') : (j.error || 'refused'), ok);
+  if (ok) loadNet();
+});
+$('reset').addEventListener('click', async () => {
+  const { ok, j } = await post('/api/settings/reset', { current_password: $('net').current_password.value });
+  say(ok ? "Back to the build's settings at the next boot." : (j.error || 'refused'), ok);
+  if (ok) loadNet();
+});
+// firmware update / backup restore: the file as the body of a POST, the password in a header
+function sendImage(file, password, onProgress, url = '/api/ota') {
+  return new Promise((resolve) => {
+    const x = new XMLHttpRequest();
+    x.open('POST', url);
+    x.setRequestHeader('Content-Type', 'application/octet-stream');
+    x.setRequestHeader('X-Sloopy-Password', encodeURIComponent(password));
+    x.upload.onprogress = (e) => { if (e.lengthComputable) onProgress(e.loaded / e.total); };
+    x.onload = () => { let j = {}; try { j = JSON.parse(x.responseText); } catch { /* */ } resolve({ ok: x.status === 200, j }); };
+    x.onerror = () => resolve({ ok: false, j: { error: 'the connection was lost during the upload' } });
+    x.send(file);
+  });
+}
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+// /api/status, given up after ms (a restarting device can take a connection and not answer)
+async function statusNow(ms = 3000) {
+  const c = new AbortController(), t = setTimeout(() => c.abort(), ms);
+  try { return await (await fetch('/api/status', { cache: 'no-store', signal: c.signal })).json(); }
+  finally { clearTimeout(t); }
+}
+// the first status of the device's next boot (null: it did not come back)
+async function nextBoot(from, timeoutMs = 180000) {
+  const end = Date.now() + timeoutMs;
+  await sleep(2000);
+  while (Date.now() < end) {
+    try { const s = await statusNow(); if (s.boot !== from.boot) return s; } catch { /* restarting */ }
+    await sleep(1000);
+  }
+  return null;
+}
+// after an update into slot "to": the new image confirmed itself, or the old one is back
+async function waitForUpdate(from, to) {
+  let s = await nextBoot(from);
+  const end = Date.now() + 60000;
+  while (s && s.app.partition === to && s.app.ota_state !== 'valid' && Date.now() < end) {
+    await sleep(1000);
+    try { s = await statusNow(); } catch { /* a rollback restarts it */ }
+  }
+  return { ok: !!s && s.app.partition === to && s.app.ota_state === 'valid', s };
+}
+$('fwf').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const f = e.target, file = f.image.files[0], from = last, prog = $('fw-prog');
+  if (!file || !from) return;
+  const btn = f.querySelector('button');
+  btn.disabled = true;
+  prog.hidden = false; prog.value = 0;
+  say(`Sending ${Math.round(file.size / 1024)} KB…`, true, 'fw-msg');
+  const { ok, j } = await sendImage(file, f.current_password.value, (p) => { prog.value = p; });
+  if (!ok) {
+    say(j.error || 'refused', false, 'fw-msg');
+    prog.hidden = true; btn.disabled = false;
+    return;
+  }
+  say(`Written to ${j.partition}: the device restarts…`, true, 'fw-msg');
+  const r = await waitForUpdate(from, j.partition);
+  say(r.ok ? `Updated: running ${r.s.app.version} from ${r.s.app.partition}.`
+    : r.s ? 'The new firmware did not start properly: the previous one runs again.' : 'The device did not come back (check its console).',
+  r.ok, 'fw-msg');
+  prog.hidden = true; btn.disabled = false;
+  status();
+});
+$('bkf').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const f = e.target, file = f.image.files[0], from = last;
+  if (!file || !from) return;
+  const btn = f.querySelector('button');
+  btn.disabled = true;
+  say('Sending the backup…', true, 'bk-msg');
+  const { ok, j } = await sendImage(file, f.current_password.value, () => {}, '/api/store');
+  if (!ok) {
+    say(j.error || 'refused', false, 'bk-msg');
+    btn.disabled = false;
+    return;
+  }
+  say(`Accepted (${j.projects} projects, ${j.autosave ? 'the working project' : 'no working project'}, ` +
+      `${j.preset_banks} preset banks, ${j.samples} samples): the device restarts…`, true, 'bk-msg');
+  const back = await nextBoot(from, 120000);
+  say(back ? 'Restored: SLOOP runs with the backup.' : 'The device did not come back (check its console).', back, 'bk-msg');
+  btn.disabled = false;
+  status();
+});
+status();
+setInterval(status, 2000);
+loadNet().catch(() => say('settings unavailable on this target', false));
+</script>
+</body>
+</html>
